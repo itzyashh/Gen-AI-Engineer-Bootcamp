@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug Intro_AI main.py",
+        "type": "debugpy",
+        "request": "launch",
+        "program": "${workspaceFolder}/Intro_AI/main.py",
+        "console": "integratedTerminal",
+        "cwd": "${workspaceFolder}/Intro_AI",
+        "python": "${workspaceFolder}/Intro_AI/.venv/bin/python"
+      }
+    ]
+  }
