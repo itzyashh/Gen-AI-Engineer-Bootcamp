@@ -12,13 +12,20 @@ def get_weather(city: str):
     """Get Weather for a given City"""
     return "sunny"
 
+def get_location():
+    """Get user's current location details"""
+    return {
+        'city': "Tokyo",
+        'country': "Japan"
+    }
+
 
 
 model = ChatOpenAI(model="gpt-4o-mini")
 
 agent = create_agent(
     model,
-    tools=[get_weather],
+    tools=[get_weather, get_location],
     debug=False
 )
 
@@ -26,7 +33,7 @@ response1 = agent.invoke({
     "messages":[
         {
             'role': 'user',
-            'content': 'How is the weather in Mumbai ?'
+            'content': 'How is the weather ?'
         }
     ]
 })
