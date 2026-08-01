@@ -66,13 +66,13 @@ agent = create_agent(
         checkpointer=InMemorySaver()
     )
 
-input_message1 = input("Enter your message: ")
+while True:
 
-response1 = agent.invoke({"messages": [{'role': 'user', 'content': input_message1}]},{"configurable": {"thread_id": "1"}})
-pprint(response1['messages'][-1].content)
+    input_message = input("Enter your message: ")
 
-input_message2 = input("Enter your message: ")
+    if input_message.lower() == "exit":
+        break
 
-response2 = agent.invoke({"messages": [{'role': 'user', 'content': input_message2}]},{"configurable": {"thread_id": "1"}})
-pprint(response2['messages'][-1].content)
+    response = agent.invoke({"messages": [{'role': 'user', 'content': input_message}]},{"configurable": {"thread_id": "1"}})
+    pprint(response['messages'][-1].content)
 
