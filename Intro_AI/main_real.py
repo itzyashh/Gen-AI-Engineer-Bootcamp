@@ -3,7 +3,7 @@ from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent, structured_output
 from pydantic import BaseModel
-
+from rich.pretty import pprintr
 from langgraph.checkpoint.sqlite import SqliteSaver
 
 
