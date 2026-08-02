@@ -1,4 +1,9 @@
 Intro_AI/.env
-__pycache__/
-*.pyc
 .venv/
+
+# Python bytecode
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.pyc

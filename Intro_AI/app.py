@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from langgraph.checkpoint.postgres import PostgresSaver
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from agent import create_weather_agent
+from agent import create_weather_agent, create_title_model
 from swagger_theme_toggle import add_dark_mode_toggle
 
 load_dotenv()
@@ -14,14 +14,16 @@ DB_URI = os.getenv("SUPABASE_DB_URI")
 
 checkpointer = None
 agent = None
+title_model = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global checkpointer, agent
+    global checkpointer, agent, title_model
     
     with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
         checkpointer.setup()
         agent = create_weather_agent(checkpointer)
+        title_model = create_title_model()
         yield
 
 app = FastAPI(
@@ -44,9 +46,11 @@ app.add_middleware(
 class ChatRequest(BaseModel):
     message: str
     thread_id: str
+    new: bool = False
     
 class ChatResponse(BaseModel):
     reply: str
+    conversation_name: str | None = None
     
 @app.get('/')
 def root():
@@ -58,7 +62,29 @@ def chat(body: ChatRequest):
         {"messages": [{"role": "user", "content": body.message}]},
         {"configurable": {"thread_id": body.thread_id}},
     )
-    return ChatResponse(reply=response["messages"][-1].content)
-
+    reply = response["messages"][-1].content
+    
+    conversation_name = None
+    if body.new:
+        title = title_model.invoke([
+            {
+                "role": "system",
+                "content": (
+                    "Generate a short sidebar title for this chat. "
+                    "Use 3-6 words, no quotes, no trailing punctuation."
+                ),
+            },
+            {
+                "role": "user",
+                "content": (
+                    f"User message: {body.message}\n"
+                    f"Assistant reply: {reply}"
+                ),
+            },
+        ])
+        conversation_name = title.conversation_name
+        
+    return ChatResponse(reply=reply, conversation_name=conversation_name)
+ 
     
 add_dark_mode_toggle(app, default_theme="dark")

@@ -4,12 +4,18 @@ from langchain_openai import ChatOpenAI
 from rich.pretty import pprint
 from dotenv import load_dotenv
 from langchain_core.tools import tool
+from pydantic import BaseModel, Field
 
 import httpx
 
 load_dotenv()
 
 WEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY') 
+
+class ConversationTitle(BaseModel):
+    conversation_name: str = Field(
+        description="Short 3-6 word title summarizing the chat topic"
+    )
 
 @tool
 def get_weather(latitude: str, longitude: str):
@@ -49,3 +55,7 @@ def create_weather_agent(checkpointer):
         system_prompt="Give concise response",
         checkpointer=checkpointer
     )
+    
+def create_title_model():
+    model = ChatOpenAI(model="gpt-4o-mini")
+    return model.with_structured_output(ConversationTitle)
