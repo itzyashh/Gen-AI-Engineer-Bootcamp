@@ -3,12 +3,14 @@ from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent, structured_output
 from pydantic import BaseModel
-
-from langgraph.checkpoint.sqlite import SqliteSaver
-
+from rich.pretty import pprint
+from langgraph.checkpoint.postgres import PostgresSaver
+import os 
 
 import requests
 load_dotenv()
+
+DB_URI = os.getenv('SUPABASE_DB_URI')
 
 @tool
 def get_weather(latitude: str, longitude: str):
@@ -59,7 +61,8 @@ def get_location():
 
 model = ChatOpenAI(model="gpt-4o-mini")
 
-with SqliteSaver.from_conn_string('checkpoints.db') as checkpointer:
+with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
+    checkpointer.setup()
     agent = create_agent(
             model,
             tools=[get_weather, get_location],
