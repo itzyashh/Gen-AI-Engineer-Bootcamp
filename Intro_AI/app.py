@@ -32,8 +32,6 @@ app = FastAPI(
     }        
     )
 
-add_dark_mode_toggle(app, default_theme="dark")
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -63,3 +61,4 @@ def chat(body: ChatRequest):
     return ChatResponse(reply=response["messages"][-1].content)
 
     
+add_dark_mode_toggle(app, default_theme="dark")
