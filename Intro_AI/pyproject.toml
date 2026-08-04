@@ -1,7 +1,7 @@
 [project]
 name = "intro-ai"
 version = "0.1.0"
-description = "Add your description here"
+description = "General-purpose LLM agent API"
 readme = "README.md"
 authors = [
     { name = "Yash Jadhav", email = "yashjadhav1411@rocketmail.com" }

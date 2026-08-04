@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from langgraph.checkpoint.postgres import PostgresSaver
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from agent import create_weather_agent, create_title_model
+from agent import create_llm_agent, create_title_model
 from swagger_theme_toggle import add_dark_mode_toggle
 
 load_dotenv()
@@ -22,12 +22,12 @@ async def lifespan(app: FastAPI):
     
     with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
         checkpointer.setup()
-        agent = create_weather_agent(checkpointer)
+        agent = create_llm_agent(checkpointer)
         title_model = create_title_model()
         yield
 
 app = FastAPI(
-    title="Weather Agent API",
+    title="LLM Agent API",
     lifespan=lifespan,
     swagger_ui_parameters={
         "syntaxHighlight.theme": "obsidian"
@@ -54,7 +54,7 @@ class ChatResponse(BaseModel):
     
 @app.get('/')
 def root():
-    return {"status": "ok", "message": "Weather Agent API is running"}
+    return {"status": "ok", "message": "LLM Agent API is running"}
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(body: ChatRequest):

@@ -46,7 +46,7 @@ def get_location():
         "longitude": response.get("loc").split(",")[1]
     }
     
-def create_weather_agent(checkpointer):
+def create_llm_agent(checkpointer):
     model = ChatOpenAI(model="gpt-4o-mini")
     return create_agent(
         model,
